@@ -6,6 +6,9 @@ if(!isset($_SESSION['user']))
     header("Location: login.php");
     exit();
 }
+include 'db.php';
+$result = mysqli_query($conn, "SELECT * FROM booking");
+
 ?>
 
 <!DOCTYPE html>
@@ -14,6 +17,8 @@ if(!isset($_SESSION['user']))
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Hotel Management Dashboard - Black & White Theme</title>
+ <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -190,6 +195,7 @@ if(!isset($_SESSION['user']))
 
   /* Cards grid */
   .cards {
+    margin-top:70px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;
@@ -223,7 +229,7 @@ if(!isset($_SESSION['user']))
   }
 
   /* Full width cards for charts */
-  .card.chart-card {
+  .booking-view-card {
     grid-column: 1 / -1;
   }
 
@@ -285,7 +291,102 @@ if(!isset($_SESSION['user']))
   main::-webkit-scrollbar-track {
     background-color: transparent;
   }
-  
+    /* Booking Table */
+  .booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .booking-table th, .booking-table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+    background-color: #fff;
+    color: #000;
+  }
+  .booking-table th {
+    background-color: #eee;
+    font-weight: 700;
+  }
+
+  .btn {
+    background-color: #222;
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 20px;
+  }
+  .btn:hover {
+    background-color: #444;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0; top: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    color: #000;
+    position: relative;
+  }
+
+  .modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .modal-content label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .modal-content input, .modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+  }
+
+  .submit-btn {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .submit-btn:hover {
+    background-color: #444;
+  }
 
   /* Responsive adjustments */
   @media (max-width: 900px) {
@@ -359,12 +460,12 @@ if(!isset($_SESSION['user']))
   <nav role="navigation" aria-label="Sidebar Navigation">
     <div class="logo" aria-label="Hotel Dashboard Logo">HOTEL DASHBOARD</div>
 
-    <div class="nav-item active" title="Dashboard" aria-current="page" tabindex="0">
+    <div class="nav-item " title="Dashboard" aria-current="page" tabindex="0">
       <!-- Home icon -->
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
       <span><a href="dashboard.php" style="text-decoration:none; color:white;">Dashboard</a></span>
     </div>
-    <div class="nav-item" title="Bookings" tabindex="0">
+    <div class="nav-item active" title="Bookings" tabindex="0">
       <!-- Bookings icon -->
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 13h2v-2H3v2zm0-4h2V7H3v2zm0 8h2v-2H3v2zm4 0h14v-2H7v2zm0-4h14v-2H7v2zm0-6v2h14V7H7z"/></svg>
       <span><a href="booking.php" style="text-decoration:none; color:white;">Bookings</a></span>
@@ -403,123 +504,108 @@ if(!isset($_SESSION['user']))
         </div>
       </div>
     </div>
-
-    <div class="cards" role="region" aria-label="Hotel data cards">
-
-      <section class="card" aria-label="Occupancy Rate">
-        <h2>Occupancy Rate</h2>
-        <div class="value" aria-live="polite">78%</div>
-        <div class="subtitle">Current month</div>
-      </section>
-      <section class="card" aria-label="Occupancy Rate">
-        <h2>Occupancy Rate</h2>
-        <div class="value" aria-live="polite">78%</div>
-        <div class="subtitle">Current month</div>
-      </section>
-
-      <section class="card" aria-label="Room Status">
-        <h2>Room Status</h2>
-        <div class="room-status" role="list">
-          <div class="room-status-item" role="listitem"><span>Occupied</span><span>39</span></div>
-          <div class="room-status-item" role="listitem"><span>Vacant</span><span>11</span></div>
-          <div class="room-status-item" role="listitem"><span>Under Maintenance</span><span>2</span></div>
+<div class="alert">
+<?php if (isset($_SESSION['msg'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $_SESSION['msg']; unset($_SESSION['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-      </section>
+    <?php endif; ?>
+</div>
+    <div class="cards ">
+      <section class="card booking-view-card " aria-label="Bookings Section">
+        <h2>Current Bookings</h2>
+        <button class="btn" onclick="openModal()">+ New Booking</button>
 
-      <section class="card chart-card" aria-label="Bookings Chart">
-        <h2>Bookings</h2>
-        <canvas id="bookingsChart" role="img" aria-label="Bookings chart showing bookings per week"></canvas>
+        <!-- Demo Booking Table -->
+        <table class="booking-table" aria-label="Booking Details Table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Guest Name</th>
+              <th>Room</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Delete</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+           <?php while($row = mysqli_fetch_assoc($result)) { ?>
+            <tr>
+                <td><?= $row['bookingID']; ?></td>
+                <td><?= $row['guestName']; ?></td>
+                <td><?= $row['roomNumber']; ?></td>
+                <td><?= $row['date']; ?></td>
+                <td><?= $row['status']; ?></td>
+                 <td>
+                    <a href="bookdelete.php?id=<?= $row['bookingID']; ?>" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this student?');">
+                       Delete
+                    </a>
+                </td>
+                <td>
+                    <a href="student_update.php?id=  <?= $row['id']; ?>   " class="btn btn-primary btn-sm">Update</a>
+                </td>
+            </tr>
+        <?php } ?>
+          </tbody>
+        </table>
       </section>
-
-      <section class="card chart-card" aria-label="Revenue Chart">
-        <h2>Revenue</h2>
-        <canvas id="revenueChart" role="img" aria-label="Revenue chart showing monthly revenue"></canvas>
-      </section>
-
     </div>
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  // Bookings Chart Data & Config
-  const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
-  const bookingsChart = new Chart(bookingsCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-      datasets: [{
-        label: 'Bookings',
-        data: [45, 60, 40, 55],
-        backgroundColor: 'var(--color-dark-gray)',
-        borderColor: 'var(--color-black)',
-        borderWidth: 1,
-        hoverBackgroundColor: 'var(--color-mid-gray)',
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          ticks: { color: 'var(--color-black)', font: { weight: '700' } },
-          grid: { display: false },
-          border: { display: false }
-        },
-        y: {
-          beginAtZero: true,
-          ticks: { color: 'var(--color-black)' },
-          grid: { color: 'var(--color-light-gray)' },
-          border: { display: false }
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: true }
-      }
-    }
-  });
+<!-- Booking Modal -->
+<div class="modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="bookingFormLabel">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal()" aria-label="Close modal">&times;</button>
+    <h3 id="bookingFormLabel">New Booking</h3>
+    <form id="bookingForm" action="savebooking.php" method="POST">
+      
+      <label for="guestName">Guest Name</label>
+      <input type="text" id="guestName" name="guestName" required>
 
-  // Revenue Chart Data & Config
-  const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-  const revenueChart = new Chart(revenueCtx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-      datasets: [{
-        label: 'Revenue',
-        data: [12000, 15000, 13000, 14000, 17000],
-        fill: false,
-        borderColor: 'var(--color-black)',
-        backgroundColor: 'var(--color-dark-gray)',
-        tension: 0.25,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        borderWidth: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          ticks: { color: 'var(--color-black)', font: { weight: '700' } },
-          grid: { display: false },
-          border: { display: false }
-        },
-        y: {
-          beginAtZero: false,
-          ticks: { color: 'var(--color-black)' },
-          grid: { color: 'var(--color-light-gray)' },
-          border: { display: false }
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: true }
-      }
-    }
-  });
+      <label for="roomNumber">Room</label>
+      <select id="roomNumber" name="roomNumber" required>
+        <option value="">Select Room</option>
+        <option value="101">Room 101</option>
+        <option value="204">Room 204</option>
+        <option value="305">Room 305</option>
+      </select>
+
+      <label for="date">Booking Date</label>
+      <input type="date" id="date" name="date" required>
+
+      <label for="status">Status</label>
+      <select id="status" name="status" required>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Pending">Pending</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('bookingModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('bookingModal').style.display = 'none';
+  }
+
+  // Example submission handler
+//   document.getElementById('bookingForm').addEventListener('submit', function(event) {
+//     event.preventDefault();
+//     alert('Booking Submitted!');
+//     closeModal();
+//     // Add real submission logic here (AJAX or form POST)
+//   });
 </script>
 </body>
 </html>
