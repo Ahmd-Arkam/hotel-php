@@ -369,16 +369,16 @@ if(!isset($_SESSION['user']))
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 13h2v-2H3v2zm0-4h2V7H3v2zm0 8h2v-2H3v2zm4 0h14v-2H7v2zm0-4h14v-2H7v2zm0-6v2h14V7H7z"/></svg>
       <span><a href="booking.php" style="text-decoration:none; color:white;">Bookings</a></span>
     </div>
-    <div class="nav-item" title="Rooms" tabindex="0">
-      <!-- Rooms icon -->
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 14h10v-4H7v4zm12-11H5c-1.1 0-2 .9-2 2v3h2V5h14v14h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+    <!-- <div class="nav-item" title="Rooms" tabindex="0"> -->
+<!-- Rooms icon -->
+      <!-- <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 14h10v-4H7v4zm12-11H5c-1.1 0-2 .9-2 2v3h2V5h14v14h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
       <span><a href="" style="text-decoration:none; color:white;">Rooms</a></span>
     </div>
-    <div class="nav-item" title="Reports" tabindex="0">
-      <!-- Reports icon -->
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 13h2v-2H3v2zm0-4h2V7H3v2zm0 8h2v-2H3v2zm4 0h14v-2H7v2zm0-4h14v-2H7v2zm0-6v2h14V7H7z"/></svg>
+    <div class="nav-item" title="Reports" tabindex="0"> -->
+<!-- Reports icon -->
+      <!-- <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 13h2v-2H3v2zm0-4h2V7H3v2zm0 8h2v-2H3v2zm4 0h14v-2H7v2zm0-4h14v-2H7v2zm0-6v2h14V7H7z"/></svg>
       <span><a href="" style="text-decoration:none; color:white;">Reports</a></span>
-    </div>
+    </div> -->
   </nav>
 
   <main>

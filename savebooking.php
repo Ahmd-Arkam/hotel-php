@@ -9,7 +9,7 @@ $roomNumber = $_POST['roomNumber'];
 $date = $_POST['date'];
 $status = $_POST['status'];
 
-$sql = "INSERT INTO booking(guestName,roomNumber,date,status) VALUES ('$guestName','$roomNumber','$date','status')";
+$sql = "INSERT INTO booking(guestName,roomNumber,date,status) VALUES ('$guestName','$roomNumber','$date','$status')";
 $res = mysqli_query($conn,$sql);
 if($res)
 {

@@ -4,7 +4,7 @@ include 'db.php';
 
 session_start();
 
-$id = $_POST['bookingID'];
+$id = $_GET['id'];
 
  $sql = "DELETE FROM booking WHERE bookingID= $id";
 // "DELETE FROM booking WHERE bookingID = $id";
